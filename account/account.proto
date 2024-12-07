@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+package proto;
+
+option go_package = "github.com/asliddinberdiev/microservice_graphql/account/proto";
+
+message Account {
+  string id = 1;
+  string name = 2;
+}
+
+message CreateAccountRequest {
+  string name = 1;
+}
+
+message CreateAccountResponse {
+  Account account = 1;
+}
+
+message GetAccountByIDRequest {
+  string id = 1;
+}
+
+message GetAccountByIDResponse {
+  Account account = 1;
+}
+
+message GetAccountsRequest {
+  uint64 skip = 1;
+  uint64 take = 2;
+}
+
+message GetAccountsResponse {
+  repeated Account accounts = 1;
+}
+
+service AccountService {
+  rpc CreateAccount(CreateAccountRequest) returns (CreateAccountResponse);
+  rpc GetAccountByID(GetAccountByIDRequest) returns (GetAccountByIDResponse);
+  rpc GetAccounts(GetAccountsRequest) returns (GetAccountsResponse);
+}
