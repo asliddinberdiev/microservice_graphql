@@ -1,0 +1,49 @@
+syntax = "proto3";
+
+package proto;
+
+option go_package = "github.com/asliddinberdiev/microservice_graphql/catalog/proto";
+
+message Product {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  uint64 price = 4;
+  uint64 quantity = 5;
+}
+
+message CreateProductRequest {
+  string name = 1;
+  string description = 2;
+  uint64 price = 3;
+  uint64 quantity = 4;
+}
+
+message CreateProductResponse {
+  Product product = 1;
+}
+
+message GetProductByIDRequest {
+  string id = 1;
+}
+
+message GetProductByIDResponse {
+  Product product = 1;
+}
+
+message GetProductsRequest {
+  uint64 skip = 1;
+  uint64 take = 2;
+  repeated string ids = 3;
+  string query = 4;
+}
+
+message GetProductsResponse {
+  repeated Product products = 1;
+}
+
+service CatalogService {
+  rpc CreateProduct(CreateProductRequest) returns (CreateProductResponse);
+  rpc GetProductByID(GetProductByIDRequest) returns (GetProductByIDResponse);
+  rpc GetProducts(GetProductsRequest) returns (GetProductsResponse);
+}

@@ -17,11 +17,11 @@ type Repository interface {
 	GetAccounts(ctx context.Context, skip, take uint64) ([]*Account, error)
 }
 
-type postgresRepository struct {
+type PostgresRepository struct {
 	db *sql.DB
 }
 
-func NewPostgresRepository(url string) (*postgresRepository, error) {
+func NewPostgresRepository(url string) (*PostgresRepository, error) {
 	db, err := sql.Open("postgres", url)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to open database")
@@ -34,20 +34,20 @@ func NewPostgresRepository(url string) (*postgresRepository, error) {
 		return nil, errors.Wrap(err, "failed to ping database")
 	}
 
-	return &postgresRepository{db: db}, nil
+	return &PostgresRepository{db: db}, nil
 }
 
-func (r *postgresRepository) Close() {
+func (r *PostgresRepository) Close() {
 	r.db.Close()
 }
 
-func (r *postgresRepository) Ping() error {
+func (r *PostgresRepository) Ping() error {
 	return r.db.Ping()
 }
 
-func (r *postgresRepository) CreateAccount(ctx context.Context, name string) (*Account, error) {
+func (r *PostgresRepository) CreateAccount(ctx context.Context, name string) (*Account, error) {
 	query := `
-		INSERT INTO account (name) 
+		INSERT INTO accounts (name) 
 		VALUES ($1)
 		RETURNING id
 	`
@@ -60,10 +60,10 @@ func (r *postgresRepository) CreateAccount(ctx context.Context, name string) (*A
 	return &account, nil
 }
 
-func (r *postgresRepository) GetAccountByID(ctx context.Context, id string) (*Account, error) {
+func (r *PostgresRepository) GetAccountByID(ctx context.Context, id string) (*Account, error) {
 	query := `
 		SELECT id, name 
-		FROM account 
+		FROM accounts 
 		WHERE id = $1
 	`
 
@@ -79,10 +79,10 @@ func (r *postgresRepository) GetAccountByID(ctx context.Context, id string) (*Ac
 	return &account, nil
 }
 
-func (r *postgresRepository) GetAccounts(ctx context.Context, skip, take uint64) ([]*Account, error) {
+func (r *PostgresRepository) GetAccounts(ctx context.Context, skip, take uint64) ([]*Account, error) {
 	query := `
 		SELECT id, name 
-		FROM account ORDER BY id DESC LIMIT $1 OFFSET $2
+		FROM accounts ORDER BY id DESC LIMIT $1 OFFSET $2
 	`
 
 	rows, err := r.db.QueryContext(ctx, query, take, skip)

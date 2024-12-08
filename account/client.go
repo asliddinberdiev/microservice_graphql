@@ -18,7 +18,7 @@ func NewClient(url string) (*Client, error) {
 	}
 
 	c := proto.NewAccountServiceClient(conn)
-	return &Client{conn, c}, nil
+	return &Client{conn: conn, service: c}, nil
 }
 
 func (c *Client) Close() {
