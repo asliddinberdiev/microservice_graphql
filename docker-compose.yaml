@@ -2,31 +2,37 @@ services:
   account:
     build:
       context: .
-      dockerfile: ./account/app.dockerfile
+      dockerfile: ./account/Dockerfile
     depends_on:
       - account_db
     environment:
       - DATABASE_URL=postgres://postgres:password@account_db:5432/postgres?sslmode=disable
+    networks:
+      - my-network
     restart: on-failure
 
   account_db:
-    build:
-      context: .
-      dockerfile: ./account/db.dockerfile
+    image: postgres:latest
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_DB=postgres
       - POSTGRES_PASSWORD=password
+    ports:
+      - "5432:5432"
+    networks:
+      - my-network
     restart: unless-stopped
 
   catalog:
     build:
       context: .
-      dockerfile: ./catalog/app.dockerfile
+      dockerfile: ./catalog/Dockerfile
     depends_on:
       - catalog_db
     environment:
       - DATABASE_URL=http://catalog_db:9200
+    networks:
+      - my-network
     restart: on-failure
 
   catalog_db:
@@ -34,33 +40,39 @@ services:
     environment:
       - ES_JAVA_OPTS=-Xms1g -Xmx1g
       - discovery.type=single-node
+    networks:
+      - my-network
 
   order:
     build:
       context: .
-      dockerfile: ./order/app.dockerfile
+      dockerfile: ./order/Dockerfile
     depends_on:
       - order_db
     environment:
-      - DATABASE_URL=postgres://postgres:password@order_db:5432/postgres?sslmode=disable
+      - DATABASE_URL=postgres://postgres:password@order_db:5433/postgres?sslmode=disable
       - ACCOUNT_SERVICE_URL=account:8080
       - CATALOG_SERVICE_URL=catalog:8080
+    networks:
+      - my-network
     restart: on-failure
 
   order_db:
-    build:
-      context: .
-      dockerfile: ./order/db.dockerfile
+    image: postgres:latest
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_DB=postgres
       - POSTGRES_PASSWORD=password
+    ports:
+      - "5433:5433"
+    networks:
+      - my-network
     restart: unless-stopped
 
   graphql:
     build:
       context: .
-      dockerfile: ./graphql/app.dockerfile
+      dockerfile: ./graphql/Dockerfile
     depends_on:
       - account
       - catalog
@@ -71,4 +83,10 @@ services:
       - ORDER_SERVICE_URL=order:8080
     ports:
       - "8000:8080"
+    networks:
+      - my-network
     restart: on-failure
+
+networks:
+  my-network:
+    driver: bridge

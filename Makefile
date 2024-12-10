@@ -1,3 +1,7 @@
+# envs
+account_db = postgres://postgres:password@localhost:5432/postgres?sslmode=disable
+order_db = postgres://postgres:password@localhost:5432/postgres?sslmode=disable
+
 tidy: 
 	@go mod tidy
 
@@ -26,6 +30,15 @@ order-proto:
 # generate graphql schema
 graphql-schema:
 	@cd graphql && go run github.com/99designs/gqlgen generate
+
+# psql migrations
+migrate-up:
+	@migrate --path ./account/migrations --database "$(account_db)" --verbose up
+	@migrate --path ./order/migrations --database "$(order_db)" --verbose up
+
+migrate-down:
+	@migrate --path ./account/migrations --database "$(account_db)" --verbose down
+	@migrate --path ./order/migrations --database "$(order_db)" --verbose down
 
 # run grpc servers
 run-account:

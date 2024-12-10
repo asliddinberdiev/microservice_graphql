@@ -49,7 +49,7 @@ func (r *PostgresRepository) CreateAccount(ctx context.Context, name string) (*A
 	query := `
 		INSERT INTO accounts (name) 
 		VALUES ($1)
-		RETURNING id
+		RETURNING id::text
 	`
 	var account Account
 	account.Name = name
