@@ -1,6 +1,11 @@
-package main
+package graphql
 
-import "github.com/99designs/gqlgen/graphql"
+import (
+	"github.com/99designs/gqlgen/graphql"
+	"github.com/asliddinberdiev/microservice_graphql/account"
+	"github.com/asliddinberdiev/microservice_graphql/catalog"
+	"github.com/asliddinberdiev/microservice_graphql/order"
+)
 
 type Server struct {
 	accountClient *account.Client
@@ -27,12 +32,7 @@ func NewGraphQLServer(accountUrl, catalogUrl, orderUrl string) (*Server, error) 
 		return nil, err
 	}
 
-	server := &Server{
-		accountClient: accountClient,
-		catalogClient: catalogClient,
-		orderClient:   orderClient,
-	}
-	return server, nil
+	return &Server{accountClient: accountClient, catalogClient: catalogClient, orderClient: orderClient}, nil
 }
 
 func (s *Server) Mutation() MutationResolver {

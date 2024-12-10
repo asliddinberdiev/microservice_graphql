@@ -7,6 +7,8 @@ import (
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/kelseyhightower/envconfig"
+
+	"github.com/asliddinberdiev/microservice_graphql/graphql"
 )
 
 type AppConfig struct {
@@ -21,13 +23,14 @@ func main() {
 		log.Fatal(err)
 	}
 
-	svr, err := NewGraphQLServer(cfg.AccountUrl, cfg.CatalogUrl, cfg.OrderUrl)
+	svr, err := graphql.NewGraphQLServer(cfg.AccountUrl, cfg.CatalogUrl, cfg.OrderUrl)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	http.Handle("/graphql", handler.New(svr.ToExecutableSchema()))
-	http.Handle("/playground", playground.Handler("GraphQL", "/graphql"))
+	http.Handle("/", playground.Handler("GraphQL", "/query"))
+	http.Handle("/query", handler.New(svr.ToExecutableSchema()))
 
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
+

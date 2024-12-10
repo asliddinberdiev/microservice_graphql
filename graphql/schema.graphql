@@ -10,13 +10,14 @@ type Product {
   id: String!
   name: String!
   description: String!
-  price: Float!
+  price: Int!
+  quantity: Int!
 }
 
 type Order {
   id: String!
   createdAt: Time!
-  totalPrice: Float!
+  totalPrice: Int!
   products: [OrderedProduct!]!
 }
 
@@ -24,7 +25,7 @@ type OrderedProduct {
   id: String!
   name: String!
   description: String!
-  price: Float!
+  price: Int!
   quantity: Int!
 }
 
@@ -40,7 +41,8 @@ input AccountInput {
 input ProductInput {
   name: String!
   description: String!
-  price: Float!
+  price: Int!
+  quantity: Int!
 }
 
 input OrderProductInput {
