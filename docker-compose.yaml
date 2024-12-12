@@ -40,6 +40,8 @@ services:
     environment:
       - ES_JAVA_OPTS=-Xms1g -Xmx1g
       - discovery.type=single-node
+    ports:
+      - "9200:9200"
     networks:
       - my-network
 
@@ -50,7 +52,7 @@ services:
     depends_on:
       - order_db
     environment:
-      - DATABASE_URL=postgres://postgres:password@order_db:5433/postgres?sslmode=disable
+      - DATABASE_URL=postgres://postgres:password@order_db:5432/postgres?sslmode=disable
       - ACCOUNT_SERVICE_URL=account:8080
       - CATALOG_SERVICE_URL=catalog:8080
     networks:
@@ -64,7 +66,7 @@ services:
       - POSTGRES_DB=postgres
       - POSTGRES_PASSWORD=password
     ports:
-      - "5433:5433"
+      - "5433:5432"
     networks:
       - my-network
     restart: unless-stopped
